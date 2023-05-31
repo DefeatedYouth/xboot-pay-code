@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>支付订单编辑</title>
+    <meta name="description" content="XPay个人收款支付系统 无需签约 无需第三方SDK 完全免费">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mui/3.7.1/css/mui.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="assets/css/mui.picker.min.css" />
+    <style>
+        .mui-card-header>img:first-child {
+            font-size: 0;
+            line-height: 0;
+            float: left;
+            width: 34px;
+            height: 30px;
+            width: 166px;
+            margin: auto;
+        }
+
+        .mui-btn-my {
+            color: #fff;
+            border: 1px solid #007aff;
+            background-color: #007aff;
+            width: 90%;
+        }
+
+        .mui-input-row label {
+            font-family: 'Helvetica Neue',Helvetica,sans-serif;
+            line-height: 1.1;
+            float: left;
+            width: 60%;
+            padding: 11px 15px;
+        }
+
+    </style>
+</head>
+
+<body>
+<form class="mui-input-group">
+    <div class="mui-card-header">
+        <img src="https://i.loli.net/2018/10/08/5bbaf3af87091.png">
+    </div>
+    <div class="mui-input-row">
+        <label>总开关(除自动回调接口)</label>
+        <div id="all" class="mui-switch">
+            <div class="mui-switch-handle"></div>
+        </div>
+    </div>
+    <textarea id="allReason" rows="5" placeholder="总关闭原因"></textarea>
+    <div class="mui-input-row">
+        <label>当面付开关</label>
+        <div id="dmf" class="mui-switch">
+            <div class="mui-switch-handle"></div>
+        </div>
+    </div>
+    <textarea id="dmfReason" rows="5" placeholder="当面付关闭原因"></textarea>
+    <div class="mui-input-row">
+        <label>微信官方开关</label>
+        <div id="wechat" class="mui-switch">
+            <div class="mui-switch-handle"></div>
+        </div>
+    </div>
+    <textarea id="wechatReason" rows="5" placeholder="微信官方关闭原因"></textarea>
+    <div class="mui-input-row">
+        <label>支付宝开关</label>
+        <div id="zfb" class="mui-switch">
+            <div class="mui-switch-handle"></div>
+        </div>
+    </div>
+    <textarea id="zfbReason" rows="5" placeholder="支付宝支付关闭原因"></textarea>
+    <div class="mui-input-row">
+        <label>微信开关</label>
+        <div id="wx" class="mui-switch">
+            <div class="mui-switch-handle"></div>
+        </div>
+    </div>
+    <textarea id="wxReason" rows="5" placeholder="微信支付关闭原因"></textarea>
+    <div class="mui-input-row">
+        <label>QQ开关</label>
+        <div id="qq" class="mui-switch">
+            <div class="mui-switch-handle"></div>
+        </div>
+    </div>
+    <textarea id="qqReason" rows="5" placeholder="QQ支付关闭原因"></textarea>
+    <div class="mui-input-row">
+        <label>云闪付开关</label>
+        <div id="ysf" class="mui-switch">
+            <div class="mui-switch-handle"></div>
+        </div>
+    </div>
+    <textarea id="ysfReason" rows="5" placeholder="云闪付关闭原因"></textarea>
+    <div class="mui-input-row">
+        <label>扫码点单开关</label>
+        <div id="smdd" class="mui-switch">
+            <div class="mui-switch-handle"></div>
+        </div>
+    </div>
+    <textarea id="smddReason" rows="5" placeholder="扫码点单关闭原因"></textarea>
+    <div class="mui-button-row">
+        <button type="button" class="mui-btn mui-btn-my" onclick="onSubmit()">确认提交</button>
+    </div>
+</form>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mui/3.7.1/js/mui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+
+    //获取url中的参数
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+    }
+
+    var id=getUrlParam('id');
+    var token=getUrlParam('token');
+    var all = false, dmf = false, wechat = false, zfb = false, wx = false, qq = false, ysf = false, smdd = false;
+    $.get('/pay/currStatus',
+        {
+            id: id,
+            token: token
+        },
+        function (data, status) {
+            if(data.success==true){
+                $("#allReason").val(data.result.allReason);
+                $("#dmfReason").val(data.result.dmfReason);
+                $("#wechatReason").val(data.result.wechatReason);
+                $("#zfbReason").val(data.result.zfbReason);
+                $("#wxReason").val(data.result.wxReason);
+                $("#qqReason").val(data.result.qqReason);
+                $("#ysfReason").val(data.result.ysfReason);
+                $("#smddReason").val(data.result.smddReason);
+                if(data.result.all){
+                    all = true;
+                    $("#all").addClass("mui-active");
+                    $("#allReason").css('display','none');
+                }
+                if(data.result.dmf){
+                    dmf = true;
+                    $("#dmf").addClass("mui-active");
+                    $("#dmfReason").css('display','none');
+                }
+                if(data.result.wechat){
+                    wechat = true;
+                    $("#wechat").addClass("mui-active");
+                    $("#wechatReason").css('display','none');
+                }
+                if(data.result.zfb){
+                    zfb = true;
+                    $("#zfb").addClass("mui-active");
+                    $("#zfbReason").css('display','none');
+                }
+                if(data.result.wx){
+                    wx = true;
+                    $("#wx").addClass("mui-active");
+                    $("#wxReason").css('display','none');
+                }
+                if(data.result.qq){
+                    qq = true;
+                    $("#qq").addClass("mui-active");
+                    $("#qqReason").css('display','none');
+                }
+                if(data.result.ysf){
+                    ysf = true;
+                    $("#ysf").addClass("mui-active");
+                    $("#ysfReason").css('display','none');
+                }
+                if(data.result.smdd){
+                    smdd = true;
+                    $("#smdd").addClass("mui-active");
+                    $("#smddReason").css('display','none');
+                }
+            }else{
+                message(data.message);
+            }
+        }
+    );
+
+    document.getElementById("all").addEventListener("toggle",function(event){
+        if(event.detail.isActive){
+            all = true;
+            $("#allReason").css('display','none');
+        }else{
+            all = false;
+            $("#allReason").css('display','block');
+        }
+    });
+
+    document.getElementById("dmf").addEventListener("toggle",function(event){
+        if(event.detail.isActive){
+            dmf = true;
+            $("#dmfReason").css('display','none');
+        }else{
+            dmf = false;
+            $("#dmfReason").css('display','block');
+        }
+    })
+
+    document.getElementById("wechat").addEventListener("toggle",function(event){
+        if(event.detail.isActive){
+            wechat = true;
+            $("#wechatReason").css('display','none');
+        }else{
+            wechat = false;
+            $("#wechatReason").css('display','block');
+        }
+    })
+
+    document.getElementById("zfb").addEventListener("toggle",function(event){
+        if(event.detail.isActive){
+            zfb = true;
+            $("#zfbReason").css('display','none');
+        }else{
+            zfb = false;
+            $("#zfbReason").css('display','block');
+        }
+    })
+
+    document.getElementById("wx").addEventListener("toggle",function(event){
+        if(event.detail.isActive){
+            wx = true;
+            $("#wxReason").css('display','none');
+        }else{
+            wx = false;
+            $("#wxReason").css('display','block');
+        }
+    })
+
+    document.getElementById("qq").addEventListener("toggle",function(event){
+        if(event.detail.isActive){
+            qq = true;
+            $("#qqReason").css('display','none');
+        }else{
+            qq = false;
+            $("#qqReason").css('display','block');
+        }
+    })
+
+    document.getElementById("ysf").addEventListener("toggle",function(event){
+        if(event.detail.isActive){
+            ysf = true;
+            $("#ysfReason").css('display','none');
+        }else{
+            ysf = false;
+            $("#ysfReason").css('display','block');
+        }
+    })
+
+    document.getElementById("smdd").addEventListener("toggle",function(event){
+        if(event.detail.isActive){
+            smdd = true;
+            $("#smddReason").css('display','none');
+        }else{
+            smdd = false;
+            $("#smddReason").css('display','block');
+        }
+    })
+
+
+    function onSubmit() {
+        $.post('/pay/closeOrOpen',
+            {
+                id: id,
+                token: token,
+                all: all,
+                dmf: dmf,
+                wechat: wechat,
+                zfb: zfb,
+                wx: wx,
+                qq: qq,
+                ysf: ysf,
+                smdd: smdd,
+                allReason: $("#allReason").val(),
+                dmfReason: $("#dmfReason").val(),
+                wechatReason: $("#wechatReason").val(),
+                zfbReason: $("#zfbReason").val(),
+                wxReason: $("#wxReason").val(),
+                qqReason: $("#qqReason").val(),
+                ysfReason: $("#ysfReason").val(),
+                smddReason: $("#smddReason").val()
+            },
+            function (data, status) {
+                if (data.success == true) {
+                    mui.alert('操作成功', null, null, function(e) {
+                        window.location.reload();
+                    });
+                } else {
+                    message(data.message);
+                }
+            });
+    }
+
+    function message(m){
+        mui.toast(m,{ duration:'long', type:'div' })
+    }
+</script>
+</html>
